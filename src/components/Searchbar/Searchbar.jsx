@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const Searchbar = onSubmit => {
+export const Searchbar = ({ onSubmit }) => {
   const [value, setValue] = useState('');
 
   const handleChange = evt => {

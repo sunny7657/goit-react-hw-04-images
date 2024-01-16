@@ -26,24 +26,23 @@ export const App = () => {
   };
 
   useEffect(() => {
+    const getApi = async (query, page) => {
+      setIsLoading(true);
+
+      try {
+        const { hits, totalHits } = await ImageService.getImages(query, page);
+        setImages(prev => [...prev, ...hits]);
+        setTotal(totalHits);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     if (query !== '') {
       getApi(query, page);
     }
   }, [query, page]);
-
-  const getApi = async (query, page) => {
-    setIsLoading(true);
-
-    try {
-      const { hits, totalHits } = await ImageService.getImages(query, page);
-      setImages(prev => [...prev, ...hits]);
-      setTotal(totalHits);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const onClickLoadMore = () => {
     setPage(prev => prev + 1);

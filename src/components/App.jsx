@@ -16,6 +16,7 @@ export const App = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [largeUrl, setLargeUrl] = useState('');
+  const [isEmpty, setIsEmpty] = useState(false);
 
   const onFormSubmit = value => {
     setQuery(value);
@@ -23,6 +24,7 @@ export const App = () => {
     setImages([]);
     setTotal(0);
     setError(null);
+    setIsEmpty(false);
   };
 
   useEffect(() => {
@@ -31,6 +33,10 @@ export const App = () => {
 
       try {
         const { hits, totalHits } = await ImageService.getImages(query, page);
+        if (!totalHits) {
+          setIsEmpty(true);
+          return;
+        }
         setImages(prev => [...prev, ...hits]);
         setTotal(totalHits);
       } catch (error) {
@@ -61,14 +67,14 @@ export const App = () => {
       <Searchbar onSubmit={onFormSubmit} />
       {isLoading && <Loader />}
       {error && <h2 style={{ textAlign: 'center' }}>Error {error}</h2>}
-      {images.length === 0 && query !== '' && !isLoading && (
+      {isEmpty && (
         <h2 style={{ textAlign: 'center' }}>There is no matches 😒</h2>
       )}
       {images.length > 0 && (
         <ImageGallery>
           {images.map(image => (
             <ImageGalleryItem
-              key={nanoid()}
+              key={image.id}
               image={image}
               onClick={onImageClick}
             />
